@@ -3,149 +3,1690 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evolve Movement Assessment V1.2</title>
+<title>Evolve Movement Assessment V1.2.1</title>
 <style>
-:root{--bg:#0f0f10;--panel:#18181b;--panel2:#222226;--text:#fff;--muted:#b7b7bd;--orange:#ff7a00;--green:#39d353;--amber:#ffb020;--red:#ff4d4f;--line:#34343a}
-*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-.app{width:min(1180px,100%);margin:auto;padding:18px}.brand{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;border-bottom:2px solid var(--orange);padding-bottom:12px}.brand h1{margin:0;font-size:clamp(22px,4vw,34px)}.brand span{color:var(--orange)}.badge{background:#2b1b0d;color:#ffb66f;border:1px solid #6b3a13;padding:7px 10px;border-radius:999px;font-size:12px}
-.grid{display:grid;grid-template-columns:1fr 1.45fr;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}h2{margin-top:0}label{display:block;font-size:14px;color:var(--muted);margin:12px 0 6px}input,select,textarea{width:100%;min-height:46px;border-radius:10px;border:1px solid #44444a;background:#111114;color:#fff;padding:10px 12px;font-size:16px}textarea{min-height:90px;resize:vertical}
-button{min-height:46px;border:0;border-radius:10px;padding:10px 14px;font-size:15px;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--orange);color:#111}.secondary{background:#303036;color:#fff}.danger{background:#4b1818;color:#fff}.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.controls button{flex:1 1 140px}
-.video-wrap{position:relative;width:100%;aspect-ratio:3/4;background:#050506;overflow:hidden;border-radius:14px;border:1px solid #35353b}video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}canvas{pointer-events:none}.camera-off{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted);z-index:2}
-.state{margin-top:12px;padding:12px;border-radius:10px;background:#111114;border:1px solid #303036}.state strong{color:var(--orange)}.status,.instruction{margin-top:12px;padding:12px;border-radius:10px;background:#111114;border:1px solid #303036;line-height:1.4}.instruction{background:#20180f;border-color:#5c3717;color:#ffd2a6}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.metric{background:var(--panel2);border:1px solid #36363d;border-radius:12px;padding:12px}.metric small{display:block;color:var(--muted);margin-bottom:4px}.metric strong{font-size:20px}.green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}.note{color:var(--muted);line-height:1.45;font-size:13px;margin-top:12px}.summary{display:none;margin-top:14px;border-left:4px solid var(--orange);padding:14px;background:#141416;border-radius:10px}.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.summary-item{background:#202024;border:1px solid #34343a;border-radius:10px;padding:10px}.summary-item small{display:block;color:var(--muted);margin-bottom:4px}.summary-item strong{font-size:18px}
+:root{
+  --bg:#0f0f10;
+  --panel:#18181b;
+  --panel2:#222226;
+  --text:#fff;
+  --muted:#b7b7bd;
+  --orange:#ff7a00;
+  --green:#39d353;
+  --amber:#ffb020;
+  --red:#ff4d4f;
+  --line:#34343a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.app{width:min(1180px,100%);margin:auto;padding:18px}
+.brand{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;border-bottom:2px solid var(--orange);padding-bottom:12px}
+.brand h1{margin:0;font-size:clamp(22px,4vw,34px)}
+.brand span{color:var(--orange)}
+.badge{background:#2b1b0d;color:#ffb66f;border:1px solid #6b3a13;padding:7px 10px;border-radius:999px;font-size:12px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:1fr 1.45fr;gap:16px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+h2,h3{margin-top:0}
+label{display:block;font-size:14px;color:var(--muted);margin:12px 0 6px}
+input,select,textarea{width:100%;min-height:46px;border-radius:10px;border:1px solid #44444a;background:#111114;color:#fff;padding:10px 12px;font-size:16px}
+input:read-only{opacity:.8}
+textarea{min-height:90px;resize:vertical}
+button{min-height:46px;border:0;border-radius:10px;padding:10px 14px;font-size:15px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--orange);color:#111}
+.secondary{background:#303036;color:#fff}
+.danger{background:#4b1818;color:#fff}
+.success{background:#174d25;color:#fff}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.controls button{flex:1 1 140px}
+.database{border:1px solid #3a3a40;background:#141416;border-radius:14px;padding:14px}
+.database h3{margin:0 0 8px}
+.inline-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.inline-row button{min-width:130px}
+.history{display:none;margin-top:14px}
+.history-list{display:grid;gap:8px;margin-top:8px}
+.history-row{background:#202024;border:1px solid #36363d;border-radius:10px;padding:10px;display:grid;grid-template-columns:1.3fr 1fr auto;gap:8px;align-items:center}
+.history-row small{color:var(--muted);display:block}
+.message{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;background:#111114;border:1px solid #34343a;line-height:1.4}
+.privacy{margin-top:12px;padding:10px 12px;border-radius:10px;background:#121b21;border:1px solid #294455;color:#c9e8ff;font-size:13px;line-height:1.45}
+.setup-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.setup-section h2{margin-bottom:8px}
 
-.success{background:#174d25;color:#fff}.database{margin-bottom:16px;border:1px solid #3a3a40;background:#141416;border-radius:14px;padding:14px}.database h3{margin:0 0 8px}.inline-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}.inline-row button{min-width:130px}.history{display:none;margin-top:14px}.history-list{display:grid;gap:8px;margin-top:8px}.history-row{background:#202024;border:1px solid #36363d;border-radius:10px;padding:10px;display:grid;grid-template-columns:1.3fr 1fr auto;gap:8px;align-items:center}.history-row small{color:var(--muted);display:block}.save-status{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;background:#111114;border:1px solid #34343a}.privacy{margin-top:12px;padding:10px 12px;border-radius:10px;background:#121b21;border:1px solid #294455;color:#c9e8ff;font-size:13px;line-height:1.45}
-@media(max-width:800px){.grid{grid-template-columns:1fr}}@media(max-width:520px){.metrics,.summary-grid,.inline-row,.history-row{grid-template-columns:1fr}.inline-row button{width:100%}}
+/* Assessment camera area */
+.camera-card{position:relative}
+.camera-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.camera-meta{min-width:0}
+.camera-meta strong{display:block;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+.camera-meta small{color:var(--muted)}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.toolbar-actions button{min-height:38px;padding:7px 10px;font-size:13px}
+#backSetup{display:none}
+
+.video-wrap{position:relative;width:100%;aspect-ratio:3/4;background:#050506;overflow:hidden;border-radius:14px;border:1px solid #35353b}
+video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+canvas{pointer-events:none}
+.camera-off{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted);z-index:5;background:#050506}
+.video-topbar{position:absolute;left:10px;right:10px;top:10px;z-index:7;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
+.video-chip{padding:7px 10px;border-radius:999px;background:rgba(10,10,12,.78);border:1px solid rgba(255,255,255,.18);font-size:12px;font-weight:700;backdrop-filter:blur(6px)}
+.instruction-overlay{position:absolute;left:12px;right:12px;bottom:14px;z-index:8;text-align:center;padding:11px 14px;border-radius:12px;background:rgba(12,12,14,.84);border:1px solid rgba(255,122,0,.6);font-size:clamp(14px,2.7vw,19px);font-weight:700;line-height:1.35;backdrop-filter:blur(6px)}
+.countdown-overlay{position:absolute;inset:0;z-index:10;display:none;place-items:center;background:rgba(0,0,0,.28);pointer-events:none}
+.countdown-overlay.show{display:grid}
+.countdown-number{font-size:clamp(78px,22vw,170px);font-weight:900;line-height:1;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.8)}
+.countdown-number.go{color:var(--orange)}
+
+.camera-controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.camera-controls button{flex:1 1 125px}
+.assessment-state{margin-top:10px;padding:9px 11px;border-radius:10px;background:#111114;border:1px solid #303036;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.assessment-state strong{color:var(--orange)}
+.status{margin-top:10px;padding:10px 12px;border-radius:10px;background:#111114;border:1px solid #303036;line-height:1.4}
+.position-tip{color:var(--muted);line-height:1.4;font-size:13px;margin:10px 0 0}
+
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.metric{background:var(--panel2);border:1px solid #36363d;border-radius:12px;padding:10px}
+.metric small{display:block;color:var(--muted);margin-bottom:4px}
+.metric strong{font-size:19px}
+.green{color:var(--green)}
+.amber{color:var(--amber)}
+.red{color:var(--red)}
+.note{color:var(--muted);line-height:1.45;font-size:13px;margin-top:12px}
+.summary{display:none;margin-top:14px;border-left:4px solid var(--orange);padding:14px;background:#141416;border-radius:10px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.summary-item{background:#202024;border:1px solid #34343a;border-radius:10px;padding:10px}
+.summary-item small{display:block;color:var(--muted);margin-bottom:4px}
+.summary-item strong{font-size:18px}
+.results-area{margin-top:14px;padding-top:4px}
+
+/* Streamlined assessment mode */
+body.assessment-mode .grid{grid-template-columns:1fr}
+body.assessment-mode .setup-card{display:none}
+body.assessment-mode .camera-card{width:min(760px,100%);margin:0 auto}
+body.assessment-mode #backSetup{display:inline-block}
+body.assessment-mode .brand{margin-bottom:10px}
+body.assessment-mode .camera-toolbar{position:sticky;top:0;z-index:20;background:var(--panel);padding:4px 0 8px}
+body.assessment-mode .video-wrap{max-height:72vh;margin:auto}
+body.assessment-mode .position-tip{display:none}
+
+@media(max-width:800px){
+  .grid{grid-template-columns:1fr}
+  .camera-card{order:2}
+  .setup-card{order:1}
+  body.assessment-mode .app{padding:10px}
+  body.assessment-mode .brand h1{font-size:20px}
+  body.assessment-mode .badge{font-size:11px}
+  body.assessment-mode .video-wrap{aspect-ratio:3/4;max-height:none}
+}
+@media(max-width:560px){
+  .metrics,.summary-grid,.inline-row,.history-row{grid-template-columns:1fr}
+  .inline-row button{width:100%}
+  .brand{align-items:flex-start}
+  .camera-meta strong{max-width:230px}
+  .toolbar-actions{width:100%}
+  .toolbar-actions button{flex:1}
+  .camera-controls button{flex:1 1 46%}
+  body.assessment-mode .metrics{grid-template-columns:1fr 1fr}
+  body.assessment-mode .metric{padding:8px}
+  body.assessment-mode .metric strong{font-size:17px}
+}
 </style>
 </head>
 <body>
 <main class="app">
-<div class="brand"><h1>EVOLVE <span>Movement Assessment</span></h1><div class="badge">V1.2 • Client Database</div></div>
-<div class="grid">
-<section class="card">
-<div class="database">
-<h3>Client Database</h3>
-<div class="inline-row"><div><label for="coachPin">Coach PIN</label><input id="coachPin" type="password" inputmode="numeric" autocomplete="off" placeholder="Enter coach PIN"></div><button id="loadClients" class="secondary">Load Clients</button></div>
-<label for="clientSelect">Existing client</label><select id="clientSelect"><option value="">+ New client</option></select>
-<label for="clientName">Client name</label><input id="clientName" type="text" placeholder="Enter client name">
-<label for="clientReference">Client reference (optional)</label><input id="clientReference" type="text" placeholder="e.g. JS-01">
-<label for="assessmentDate">Assessment date</label><input id="assessmentDate" type="date">
-<div class="controls"><button id="viewHistory" class="secondary" disabled>View History</button></div>
-<div class="history" id="history"><h3 style="margin-top:12px">Recent Assessments</h3><div class="history-list" id="historyList"></div></div>
-<div class="privacy">The Coach PIN is kept only in this open browser session. It is not saved in GitHub, local storage or cookies.</div>
-</div>
-<h2>Squat Assessment</h2>
-<label for="viewSelect">Assessment view</label><select id="viewSelect"><option value="front">Front view — knee tracking</option><option value="side">Side view — knee angle / depth</option></select>
-<label for="cameraFacing">Preferred camera</label><select id="cameraFacing"><option value="environment">Rear camera</option><option value="user">Front camera</option></select>
-<div class="controls"><button id="startCamera" class="primary">Start Camera</button><button id="stopCamera" class="danger" disabled>Stop Camera</button></div>
-<div class="controls"><button id="startAssessment" class="primary" disabled>Start Assessment</button><button id="retake" class="secondary" disabled>Retake</button></div>
-<div class="state">Assessment state: <strong id="stateText">Camera off</strong></div>
-<div class="status" id="systemStatus">Camera is off. No camera permission has been requested.</div>
-<div class="instruction" id="instruction">Start the camera, make sure the full body is visible, then press Start Assessment.</div>
-<div class="metrics"><div class="metric"><small>Live left knee</small><strong id="leftMetric">—</strong></div><div class="metric"><small>Live right knee</small><strong id="rightMetric">—</strong></div></div>
-<div class="metrics"><div class="metric"><small>Left status</small><strong id="leftStatus">—</strong></div><div class="metric"><small>Right status</small><strong id="rightStatus">—</strong></div></div>
-<label for="coachNotes">Coach notes</label><textarea id="coachNotes" placeholder="Optional notes about control, pain, technique, footwear, camera position, etc."></textarea>
-<div class="summary" id="summary"></div>
-<div class="controls"><button id="saveAssessment" class="success" disabled>Save to Client Record</button></div>
-<div class="save-status" id="saveStatus"></div>
-<p class="note">V1.2 is a coaching aid, not a medical diagnostic tool. Green/amber/red thresholds are starter coaching values only and should be calibrated through real testing before being treated as formal scoring criteria. If a client reports pain, stop the assessment and follow your normal professional process.</p>
-</section>
-<section class="card">
-<h2>Live assessment</h2>
-<div class="video-wrap"><video id="video" playsinline muted></video><canvas id="overlay"></canvas><div class="camera-off" id="cameraOff"><div><strong>Camera off</strong><br><br>Press <b>Start Camera</b> when you are ready.<br>Camera access is requested only at that point.</div></div></div>
-<p class="note" id="positionTip">Front view: keep the client's full body visible and centre the camera. After pressing Start Assessment, stand tall briefly before beginning one controlled squat.</p>
-</section>
-</div>
-<form id="saveForm" method="POST" target="saveFrame" style="display:none"><input id="payloadField" name="payload" type="hidden"></form><iframe name="saveFrame" title="Assessment save response" style="display:none"></iframe>
+  <div class="brand">
+    <h1>EVOLVE <span>Movement Assessment</span></h1>
+    <div class="badge">V1.2.1 • Assessment Mode</div>
+  </div>
+
+  <div class="grid">
+    <section class="card setup-card">
+      <div class="database">
+        <h3>Client Database</h3>
+
+        <div class="inline-row">
+          <div>
+            <label for="coachPin">Coach PIN</label>
+            <input id="coachPin" type="password" inputmode="numeric" autocomplete="off" placeholder="Enter coach PIN">
+          </div>
+          <button id="loadClients" class="secondary">Load Clients</button>
+        </div>
+
+        <div class="message" id="databaseStatus"></div>
+
+        <label for="clientSelect">Existing client</label>
+        <select id="clientSelect">
+          <option value="">+ New client</option>
+        </select>
+
+        <label for="clientName">Client name</label>
+        <input id="clientName" type="text" placeholder="Enter client name">
+
+        <label for="clientReference">Client reference (optional)</label>
+        <input id="clientReference" type="text" placeholder="e.g. JS-01">
+
+        <label for="assessmentDate">Assessment date</label>
+        <input id="assessmentDate" type="date">
+
+        <div class="controls">
+          <button id="viewHistory" class="secondary" disabled>View History</button>
+        </div>
+
+        <div class="history" id="history">
+          <h3 style="margin-top:12px">Recent Assessments</h3>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="privacy">
+          The Coach PIN is kept only in this open browser session. It is not saved in GitHub, local storage or cookies.
+        </div>
+      </div>
+
+      <div class="setup-section">
+        <h2>Assessment Setup</h2>
+
+        <label for="viewSelect">Assessment view</label>
+        <select id="viewSelect">
+          <option value="front">Front view — knee tracking</option>
+          <option value="side">Side view — knee angle / depth</option>
+        </select>
+
+        <label for="cameraFacing">Preferred camera</label>
+        <select id="cameraFacing">
+          <option value="environment">Rear camera</option>
+          <option value="user">Front camera</option>
+        </select>
+
+        <div class="controls">
+          <button id="startCamera" class="primary">Start Camera / Assessment Mode</button>
+        </div>
+
+        <p class="note">
+          Once the camera starts, Evolve switches to a streamlined assessment screen so the instructions,
+          camera, live measurements and controls stay together.
+        </p>
+      </div>
+    </section>
+
+    <section class="card camera-card" id="cameraCard">
+      <div class="camera-toolbar">
+        <div class="camera-meta">
+          <strong id="cameraClient">No client selected</strong>
+          <small id="cameraView">Front view • Bodyweight Squat</small>
+        </div>
+        <div class="toolbar-actions">
+          <button id="soundToggle" class="secondary" type="button">🔊 Sound On</button>
+          <button id="backSetup" class="secondary" type="button">← Back to Setup</button>
+        </div>
+      </div>
+
+      <div class="video-wrap">
+        <video id="video" playsinline muted></video>
+        <canvas id="overlay"></canvas>
+
+        <div class="camera-off" id="cameraOff">
+          <div>
+            <strong>Camera off</strong><br><br>
+            Select a client and press <b>Start Camera / Assessment Mode</b>.
+          </div>
+        </div>
+
+        <div class="video-topbar">
+          <span class="video-chip" id="overlayClient">CLIENT</span>
+          <span class="video-chip" id="overlayView">FRONT</span>
+        </div>
+
+        <div class="countdown-overlay" id="countdownOverlay">
+          <div class="countdown-number" id="countdownNumber">3</div>
+        </div>
+
+        <div class="instruction-overlay" id="instruction">
+          Camera is off.
+        </div>
+      </div>
+
+      <div class="camera-controls">
+        <button id="startAssessment" class="primary" disabled>Start Assessment</button>
+        <button id="retake" class="secondary" disabled>Retake</button>
+        <button id="stopCamera" class="danger" disabled>Stop Camera</button>
+      </div>
+
+      <div class="assessment-state">
+        <span>Assessment state</span>
+        <strong id="stateText">Camera off</strong>
+      </div>
+
+      <div class="status" id="systemStatus">
+        Camera is off. No camera permission has been requested.
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <small>Left knee</small>
+          <strong id="leftMetric">—</strong>
+        </div>
+        <div class="metric">
+          <small>Right knee</small>
+          <strong id="rightMetric">—</strong>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <small>Left status</small>
+          <strong id="leftStatus">—</strong>
+        </div>
+        <div class="metric">
+          <small>Right status</small>
+          <strong id="rightStatus">—</strong>
+        </div>
+      </div>
+
+      <p class="position-tip" id="positionTip">
+        Front view: keep the client's full body visible and centre the camera.
+      </p>
+
+      <div class="results-area">
+        <label for="coachNotes">Coach notes</label>
+        <textarea id="coachNotes" placeholder="Optional notes about control, pain, technique, footwear, camera position, etc."></textarea>
+
+        <div class="summary" id="summary"></div>
+
+        <div class="controls">
+          <button id="saveAssessment" class="success" disabled>Save to Client Record</button>
+        </div>
+
+        <div class="message" id="saveStatus"></div>
+      </div>
+
+      <p class="note">
+        V1.2.1 is a coaching aid, not a medical diagnostic tool. Green/amber/red thresholds are starter
+        coaching values only and should be calibrated through real testing. If a client reports pain,
+        stop the assessment and follow your normal professional process.
+      </p>
+    </section>
+  </div>
+
+  <form id="saveForm" method="POST" target="saveFrame" style="display:none">
+    <input id="payloadField" name="payload" type="hidden">
+  </form>
+  <iframe name="saveFrame" title="Assessment save response" style="display:none"></iframe>
 </main>
+
 <script type="module">
-import {FilesetResolver,PoseLandmarker,DrawingUtils} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/+esm";
+import {
+  FilesetResolver,
+  PoseLandmarker,
+  DrawingUtils
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/+esm";
 
-// PASTE THE APPS SCRIPT WEB APP /exec URL BETWEEN THESE QUOTES.
-const WEB_APP_URL="https://script.google.com/macros/s/AKfycbwzDGKJgDhlK4tmGV-qJKANZMRZhnKEGXfsvdMJTkLTkJAF7_b8KV6j7bOVSeu2-2bq/exec";
-const APP_VERSION="1.2";
+// ==========================================================
+// IMPORTANT:
+// Paste the SAME Apps Script /exec URL used in your V1.2 app.
+// ==========================================================
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwzDGKJgDhlK4tmGV-qJKANZMRZhnKEGXfsvdMJTkLTkJAF7_b8KV6j7bOVSeu2-2bq/exec";
+const APP_VERSION = "1.2.1";
 
-const $=id=>document.getElementById(id);
-const video=$("video"),canvas=$("overlay"),ctx=canvas.getContext("2d");
-const startCameraBtn=$("startCamera"),stopCameraBtn=$("stopCamera"),startAssessmentBtn=$("startAssessment"),retakeBtn=$("retake");
-const saveAssessmentBtn=$("saveAssessment"),loadClientsBtn=$("loadClients"),viewHistoryBtn=$("viewHistory");
-const clientName=$("clientName"),clientSelect=$("clientSelect"),clientReference=$("clientReference"),assessmentDate=$("assessmentDate"),coachPin=$("coachPin"),viewSelect=$("viewSelect"),cameraFacing=$("cameraFacing"),coachNotes=$("coachNotes");
-const statusBox=$("systemStatus"),cameraOff=$("cameraOff"),positionTip=$("positionTip"),instruction=$("instruction"),stateText=$("stateText");
-const leftMetric=$("leftMetric"),rightMetric=$("rightMetric"),leftStatus=$("leftStatus"),rightStatus=$("rightStatus"),summary=$("summary");
-const saveStatus=$("saveStatus"),history=$("history"),historyList=$("historyList"),saveForm=$("saveForm"),payloadField=$("payloadField");
+const $ = id => document.getElementById(id);
 
-let stream=null,poseLandmarker=null,drawingUtils=null,cameraRunning=false,animationId=null,lastVideoTime=-1;
-let assessmentArmed=false,repState="idle",standingFrames=0,completionFrames=0,smoothAngle=null,standingHipY=null,repData=null,completedResult=null,currentAssessmentId="",clientsCache=[];
-const IDX={leftHip:23,rightHip:24,leftKnee:25,rightKnee:26,leftAnkle:27,rightAnkle:28};
+const video = $("video");
+const canvas = $("overlay");
+const ctx = canvas.getContext("2d");
 
-function todayLocal(){const d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
-assessmentDate.value=todayLocal();
-function backendConfigured(){return WEB_APP_URL.startsWith("https://script.google.com/macros/s/")&&WEB_APP_URL.endsWith("/exec")}
-function showSaveStatus(t){saveStatus.style.display="block";saveStatus.textContent=t}
-function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function makeId(prefix){return prefix+"-"+(crypto?.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2))}
-function getClientId(){if(clientSelect.value)return clientSelect.value;if(!clientName.dataset.pendingClientId)clientName.dataset.pendingClientId=makeId("CL");return clientName.dataset.pendingClientId}
-function statusRank(s){return s==="RED"?3:s==="AMBER"?2:s==="GREEN"?1:0}
-function worstStatus(list){return list.reduce((w,x)=>statusRank(x)>statusRank(w)?x:w,"GREEN")}
+const startCameraBtn = $("startCamera");
+const stopCameraBtn = $("stopCamera");
+const startAssessmentBtn = $("startAssessment");
+const retakeBtn = $("retake");
+const saveAssessmentBtn = $("saveAssessment");
+const loadClientsBtn = $("loadClients");
+const viewHistoryBtn = $("viewHistory");
+const soundToggleBtn = $("soundToggle");
+const backSetupBtn = $("backSetup");
 
+const clientName = $("clientName");
+const clientSelect = $("clientSelect");
+const clientReference = $("clientReference");
+const assessmentDate = $("assessmentDate");
+const coachPin = $("coachPin");
+const viewSelect = $("viewSelect");
+const cameraFacing = $("cameraFacing");
+const coachNotes = $("coachNotes");
 
-function setStatus(t){statusBox.textContent=t} function setInstruction(t){instruction.textContent=t} function setState(t){stateText.textContent=t}
-function setTraffic(el,label){el.textContent=label;el.className="";if(label==="GREEN")el.classList.add("green");if(label==="AMBER")el.classList.add("amber");if(label==="RED")el.classList.add("red")}
-function avg(vals){const v=vals.filter(Number.isFinite);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
-function angleDeg(a,b,c){const ab={x:a.x-b.x,y:a.y-b.y},cb={x:c.x-b.x,y:c.y-b.y};const dot=ab.x*cb.x+ab.y*cb.y,m1=Math.hypot(ab.x,ab.y),m2=Math.hypot(cb.x,cb.y);if(!m1||!m2)return null;const cos=Math.min(1,Math.max(-1,dot/(m1*m2)));return Math.acos(cos)*180/Math.PI}
-function kneeDeviation(hip,knee,ankle){const vx=ankle.x-hip.x,vy=ankle.y-hip.y,wx=knee.x-hip.x,wy=knee.y-hip.y,len2=vx*vx+vy*vy;if(!len2)return null;let t=(wx*vx+wy*vy)/len2;t=Math.max(0,Math.min(1,t));const px=hip.x+t*vx,py=hip.y+t*vy;return Math.hypot(knee.x-px,knee.y-py)}
-function frontStatus(dev){if(dev==null)return"—";if(dev<0.025)return"GREEN";if(dev<0.045)return"AMBER";return"RED"}
-function sideStatus(angle){if(angle==null)return"—";if(angle>=70&&angle<=120)return"GREEN";if((angle>=55&&angle<70)||(angle>120&&angle<=135))return"AMBER";return"RED"}
-function symmetryStatus(diff){if(diff==null)return"—";if(diff<5)return"GREEN";if(diff<10)return"AMBER";return"RED"}
-function statusClass(s){return s==="GREEN"?"green":s==="AMBER"?"amber":s==="RED"?"red":""}
+const statusBox = $("systemStatus");
+const cameraOff = $("cameraOff");
+const positionTip = $("positionTip");
+const instruction = $("instruction");
+const stateText = $("stateText");
+const leftMetric = $("leftMetric");
+const rightMetric = $("rightMetric");
+const leftStatus = $("leftStatus");
+const rightStatus = $("rightStatus");
+const summary = $("summary");
+const saveStatus = $("saveStatus");
+const databaseStatus = $("databaseStatus");
+const history = $("history");
+const historyList = $("historyList");
+const saveForm = $("saveForm");
+const payloadField = $("payloadField");
+const cameraCard = $("cameraCard");
+const cameraClient = $("cameraClient");
+const cameraView = $("cameraView");
+const overlayClient = $("overlayClient");
+const overlayView = $("overlayView");
+const countdownOverlay = $("countdownOverlay");
+const countdownNumber = $("countdownNumber");
 
-async function initPose(){if(poseLandmarker)return;setStatus("Loading movement tracking model…");const vision=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm");poseLandmarker=await PoseLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",delegate:"GPU"},runningMode:"VIDEO",numPoses:1,minPoseDetectionConfidence:.6,minPosePresenceConfidence:.6,minTrackingConfidence:.6});drawingUtils=new DrawingUtils(ctx)}
+let stream = null;
+let poseLandmarker = null;
+let drawingUtils = null;
+let cameraRunning = false;
+let animationId = null;
+let lastVideoTime = -1;
 
-async function startCamera(){
- if(!clientName.value.trim()){setStatus("Enter the client's name before starting the camera.");clientName.focus();return}
- if(!navigator.mediaDevices?.getUserMedia){setStatus("Camera access is not supported here. Open the GitHub Pages HTTPS version in a modern browser.");return}
- try{startCameraBtn.disabled=true;await initPose();stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:cameraFacing.value},width:{ideal:1280},height:{ideal:720}}});video.srcObject=stream;await video.play();canvas.width=video.videoWidth||720;canvas.height=video.videoHeight||1280;cameraRunning=true;cameraOff.style.display="none";stopCameraBtn.disabled=false;startAssessmentBtn.disabled=false;retakeBtn.disabled=true;setState("Camera ready");setStatus("Camera active. Make sure the client's full body is visible.");setInstruction("When the client is in position, press Start Assessment. They should stand tall briefly, then perform one controlled squat.");renderLoop()}
- catch(err){console.error(err);startCameraBtn.disabled=false;if(err.name==="NotAllowedError")setStatus("Camera permission was not granted. The app will not access the camera unless you allow it.");else if(err.name==="NotFoundError")setStatus("No suitable camera was found on this device.");else setStatus("The camera could not start: "+(err.message||err.name))}
+let assessmentArmed = false;
+let repState = "idle";
+let standingFrames = 0;
+let completionFrames = 0;
+let smoothAngle = null;
+let standingHipY = null;
+let repData = null;
+let completedResult = null;
+let currentAssessmentId = "";
+let clientsCache = [];
+
+let audioContext = null;
+let soundEnabled = true;
+let countdownRunning = false;
+let countdownToken = 0;
+
+const IDX = {
+  leftHip: 23,
+  rightHip: 24,
+  leftKnee: 25,
+  rightKnee: 26,
+  leftAnkle: 27,
+  rightAnkle: 28
+};
+
+function todayLocal() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
-function stopCamera(){cameraRunning=false;assessmentArmed=false;repState="idle";if(animationId)cancelAnimationFrame(animationId);animationId=null;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null;ctx.clearRect(0,0,canvas.width,canvas.height);cameraOff.style.display="grid";startCameraBtn.disabled=false;stopCameraBtn.disabled=true;startAssessmentBtn.disabled=true;retakeBtn.disabled=true;setState("Camera off");setStatus("Camera stopped. The active camera stream has been released.");setInstruction("Start the camera again whenever you want to run another assessment.")}
-function resetRep(){assessmentArmed=false;repState="idle";standingFrames=0;completionFrames=0;smoothAngle=null;standingHipY=null;repData=null;completedResult=null;currentAssessmentId="";summary.style.display="none";summary.innerHTML="";saveAssessmentBtn.disabled=true;saveStatus.style.display="none"}
-function armAssessment(){if(!cameraRunning){setStatus("Start the camera first.");return}resetRep();assessmentArmed=true;repState="waitingForStand";startAssessmentBtn.disabled=true;retakeBtn.disabled=true;setState("Stand tall");setStatus("Assessment armed.");setInstruction("Stand tall and stay still for a moment. Evolve will recognise the start of the squat automatically.")}
-function newRep(hipY){return{standingHipY:hipY,minAvgAngle:Infinity,minLeftAngle:Infinity,minRightAngle:Infinity,maxLeftDev:0,maxRightDev:0,maxHipY:hipY,bottomLeft:null,bottomRight:null,bottomAvg:null}}
-function updateRep(f){if(!repData)return;if(Number.isFinite(f.leftAngle))repData.minLeftAngle=Math.min(repData.minLeftAngle,f.leftAngle);if(Number.isFinite(f.rightAngle))repData.minRightAngle=Math.min(repData.minRightAngle,f.rightAngle);if(Number.isFinite(f.leftDev))repData.maxLeftDev=Math.max(repData.maxLeftDev,f.leftDev);if(Number.isFinite(f.rightDev))repData.maxRightDev=Math.max(repData.maxRightDev,f.rightDev);if(Number.isFinite(f.hipY))repData.maxHipY=Math.max(repData.maxHipY,f.hipY);if(Number.isFinite(f.avgAngle)&&f.avgAngle<repData.minAvgAngle){repData.minAvgAngle=f.avgAngle;repData.bottomLeft=f.leftAngle;repData.bottomRight=f.rightAngle;repData.bottomAvg=f.avgAngle}}
-function processRep(f){if(!assessmentArmed||!Number.isFinite(f.avgAngle))return;smoothAngle=smoothAngle==null?f.avgAngle:smoothAngle*.75+f.avgAngle*.25;
- if(repState==="waitingForStand"){if(smoothAngle>155){standingFrames++;standingHipY=standingHipY==null?f.hipY:standingHipY*.85+f.hipY*.15;setInstruction("Hold the standing position briefly…");if(standingFrames>=12){repState="readyToDescend";setState("Ready — begin squat");setStatus("Standing position captured.");setInstruction("Begin one controlled squat now.")}}else{standingFrames=0;setInstruction("Stand tall with the hips, knees and ankles visible.")}return}
- if(repState==="readyToDescend"){if(smoothAngle<150){repData=newRep(standingHipY??f.hipY);repState="descending";setState("Descending");setStatus("Squat detected.");setInstruction("Continue the squat naturally. Evolve is recording the rep.");updateRep(f)}return}
- if(repState==="descending"){updateRep(f);if(repData.minAvgAngle<140&&smoothAngle>repData.minAvgAngle+7){repState="ascending";completionFrames=0;setState("Returning to stand");setInstruction("Return to a full standing position.")}return}
- if(repState==="ascending"){updateRep(f);if(smoothAngle>155){completionFrames++;if(completionFrames>=10)completeAssessment()}else completionFrames=0}
-}
-function completeAssessment(){assessmentArmed=false;repState="complete";if(!repData){setStatus("Not enough usable data. Please retake.");retakeBtn.disabled=false;startAssessmentBtn.disabled=false;return}
- const left=Number.isFinite(repData.bottomLeft)?repData.bottomLeft:(Number.isFinite(repData.minLeftAngle)?repData.minLeftAngle:null),right=Number.isFinite(repData.bottomRight)?repData.bottomRight:(Number.isFinite(repData.minRightAngle)?repData.minRightAngle:null),diff=Number.isFinite(left)&&Number.isFinite(right)?Math.abs(left-right):null,hipDrop=Number.isFinite(repData.maxHipY)&&Number.isFinite(repData.standingHipY)?Math.max(0,(repData.maxHipY-repData.standingHipY)*100):null,sym=symmetryStatus(diff),depth=sideStatus(repData.bottomAvg),ld=frontStatus(repData.maxLeftDev),rd=frontStatus(repData.maxRightDev),overall=viewSelect.value==="front"?worstStatus([ld,rd,sym]):worstStatus([depth,sym]);
- completedResult={metrics:{leftBottom:left,rightBottom:right,bottomAvgAngle:repData.bottomAvg,maxLeftDevPct:repData.maxLeftDev*100,maxRightDevPct:repData.maxRightDev*100,symmetryDiff:diff,hipDrop},statuses:{left:viewSelect.value==="front"?ld:sideStatus(left),right:viewSelect.value==="front"?rd:sideStatus(right),depth,symmetry:sym,overall}};currentAssessmentId=makeId("ASMT");
- setState("Assessment complete");setStatus("One complete squat rep captured.");setInstruction("Review the results below. Retake if needed, or save to the client's record.");startAssessmentBtn.disabled=false;retakeBtn.disabled=false;saveAssessmentBtn.disabled=false;
- let details="";
- if(viewSelect.value==="front")details=`<div class="summary-grid"><div class="summary-item"><small>Max left knee deviation</small><strong class="${statusClass(ld)}">${(repData.maxLeftDev*100).toFixed(1)}% — ${ld}</strong></div><div class="summary-item"><small>Max right knee deviation</small><strong class="${statusClass(rd)}">${(repData.maxRightDev*100).toFixed(1)}% — ${rd}</strong></div><div class="summary-item"><small>Bottom-position knee difference</small><strong class="${statusClass(sym)}">${diff==null?"—":diff.toFixed(1)+"°"} — ${sym}</strong></div><div class="summary-item"><small>Overall coaching flag</small><strong class="${statusClass(overall)}">${overall}</strong></div></div>`;
- else details=`<div class="summary-grid"><div class="summary-item"><small>Left knee at bottom</small><strong>${left==null?"—":left.toFixed(1)+"°"}</strong></div><div class="summary-item"><small>Right knee at bottom</small><strong>${right==null?"—":right.toFixed(1)+"°"}</strong></div><div class="summary-item"><small>Average bottom angle</small><strong class="${statusClass(depth)}">${repData.bottomAvg==null?"—":repData.bottomAvg.toFixed(1)+"°"} — ${depth}</strong></div><div class="summary-item"><small>Left/right difference</small><strong class="${statusClass(sym)}">${diff==null?"—":diff.toFixed(1)+"°"} — ${sym}</strong></div><div class="summary-item"><small>Overall coaching flag</small><strong class="${statusClass(overall)}">${overall}</strong></div></div>`;
- summary.style.display="block";summary.innerHTML=`<strong style="font-size:20px">${escapeHtml(clientName.value.trim())} — Squat Assessment</strong><br><span style="color:#b7b7bd">${viewSelect.value==="front"?"Front view":"Side view"} • One complete rep captured</span>${details}`
-}
-function analyse(lm){const lh=lm[IDX.leftHip],rh=lm[IDX.rightHip],lk=lm[IDX.leftKnee],rk=lm[IDX.rightKnee],la=lm[IDX.leftAnkle],ra=lm[IDX.rightAnkle];if(![lh,rh,lk,rk,la,ra].every(p=>(p.visibility??1)>.45)){leftMetric.textContent=rightMetric.textContent="—";setTraffic(leftStatus,"—");setTraffic(rightStatus,"—");if(assessmentArmed)setStatus("Keep the hips, knees and ankles fully visible.");return null}
- const leftAngle=angleDeg(lh,lk,la),rightAngle=angleDeg(rh,rk,ra),avgAngle=avg([leftAngle,rightAngle]),leftDev=kneeDeviation(lh,lk,la),rightDev=kneeDeviation(rh,rk,ra),hipY=avg([lh.y,rh.y]);
- if(viewSelect.value==="front"){leftMetric.textContent=leftDev==null?"—":(leftDev*100).toFixed(1)+"%";rightMetric.textContent=rightDev==null?"—":(rightDev*100).toFixed(1)+"%";setTraffic(leftStatus,frontStatus(leftDev));setTraffic(rightStatus,frontStatus(rightDev))}else{leftMetric.textContent=leftAngle==null?"—":leftAngle.toFixed(0)+"°";rightMetric.textContent=rightAngle==null?"—":rightAngle.toFixed(0)+"°";setTraffic(leftStatus,sideStatus(leftAngle));setTraffic(rightStatus,sideStatus(rightAngle))}
- return{leftAngle,rightAngle,avgAngle,leftDev,rightDev,hipY}
-}
-function drawKnees(lm){for(const [p,s] of [[lm[IDX.leftKnee],leftStatus.textContent],[lm[IDX.rightKnee],rightStatus.textContent]]){let c=s==="RED"?"#ff4d4f":s==="AMBER"?"#ffb020":s==="GREEN"?"#39d353":"#fff";ctx.beginPath();ctx.arc(p.x*canvas.width,p.y*canvas.height,10,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#111";ctx.stroke()}}
-function renderLoop(){if(!cameraRunning)return;if(video.readyState>=2&&video.currentTime!==lastVideoTime){lastVideoTime=video.currentTime;try{const result=poseLandmarker.detectForVideo(video,performance.now());ctx.clearRect(0,0,canvas.width,canvas.height);if(result.landmarks?.length){const lm=result.landmarks[0];drawingUtils.drawConnectors(lm,PoseLandmarker.POSE_CONNECTIONS,{color:"#39d353",lineWidth:4});drawingUtils.drawLandmarks(lm,{color:"#fff",fillColor:"#39d353",lineWidth:2,radius:4});const f=analyse(lm);if(f)processRep(f);drawKnees(lm)}else if(assessmentArmed)setStatus("No full body detected. Step back and keep the client in frame.")}catch(err){console.error(err);setStatus("Movement tracking error: "+(err.message||err.name))}}animationId=requestAnimationFrame(renderLoop)}
+assessmentDate.value = todayLocal();
 
+function backendConfigured() {
+  return WEB_APP_URL.startsWith("https://script.google.com/macros/s/") &&
+         WEB_APP_URL.endsWith("/exec");
+}
 
-function jsonp(params,timeout=8000){return new Promise((resolve,reject)=>{if(!backendConfigured()){reject(new Error("Apps Script URL has not been added to index.html yet."));return}const cb="__evolve_"+Date.now()+"_"+Math.random().toString(16).slice(2),script=document.createElement("script");let timer=setTimeout(()=>{clean();reject(new Error("The database did not respond in time."))},timeout);function clean(){clearTimeout(timer);script.remove();try{delete window[cb]}catch{}}window[cb]=data=>{clean();data?.ok?resolve(data):reject(new Error(data?.error||"Database request failed."))};const u=new URL(WEB_APP_URL);Object.entries({...params,pin:coachPin.value,callback:cb}).forEach(([k,v])=>u.searchParams.set(k,v??""));script.src=u.toString();script.onerror=()=>{clean();reject(new Error("Could not contact the assessment database."))};document.body.appendChild(script)})}
-async function loadClients(){if(!coachPin.value){showSaveStatus("Enter the Coach PIN first.");coachPin.focus();return}loadClientsBtn.disabled=true;loadClientsBtn.textContent="Loading…";try{const d=await jsonp({action:"clients"});clientsCache=d.clients||[];clientSelect.innerHTML='<option value="">+ New client</option>';clientsCache.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name+(c.assessmentCount?` (${c.assessmentCount})`:"");clientSelect.appendChild(o)});showSaveStatus(clientsCache.length?`${clientsCache.length} client${clientsCache.length===1?"":"s"} loaded.`:"Database connected. No clients saved yet.")}catch(e){showSaveStatus(e.message)}finally{loadClientsBtn.disabled=false;loadClientsBtn.textContent="Load Clients"}}
-function clientChanged(){history.style.display="none";historyList.innerHTML="";clientName.dataset.pendingClientId="";const id=clientSelect.value;if(!id){clientName.readOnly=false;clientReference.readOnly=false;clientName.value="";clientReference.value="";viewHistoryBtn.disabled=true;return}const c=clientsCache.find(x=>x.id===id);if(!c)return;clientName.value=c.name;clientName.readOnly=true;clientReference.value=c.reference||"";clientReference.readOnly=true;viewHistoryBtn.disabled=false}
-async function showHistory(){if(!clientSelect.value){showSaveStatus("Select an existing client first.");return}viewHistoryBtn.disabled=true;viewHistoryBtn.textContent="Loading…";try{const d=await jsonp({action:"history",clientId:clientSelect.value});history.style.display="block";historyList.innerHTML="";if(!(d.history||[]).length){historyList.innerHTML='<div class="history-row">No saved assessments yet.</div>';return}(d.history||[]).forEach(x=>{const row=document.createElement("div");row.className="history-row";const result=x.view==="Front view"?`L ${x.maxLeftDevPct??"—"}% • R ${x.maxRightDevPct??"—"}%`:`${x.bottomAvgAngle??"—"}° avg`;row.innerHTML=`<div><strong>${escapeHtml(x.assessmentDate||x.savedAt)}</strong><small>${escapeHtml(x.assessmentType)} • ${escapeHtml(x.view)}</small></div><div>${escapeHtml(result)}</div><strong class="${statusClass(x.overallStatus)}">${escapeHtml(x.overallStatus||"—")}</strong>`;historyList.appendChild(row)})}catch(e){showSaveStatus(e.message)}finally{viewHistoryBtn.disabled=false;viewHistoryBtn.textContent="View History"}}
-function delay(ms){return new Promise(r=>setTimeout(r,ms))}
-async function confirmSave(id){for(let i=0;i<6;i++){await delay(i?850:1000);try{const r=await jsonp({action:"check",assessmentId:id},6000);if(r.saved)return true}catch(e){if(i===5)throw e}}return false}
-async function saveAssessment(){if(!backendConfigured()){showSaveStatus("The Apps Script URL still needs to be pasted into index.html.");return}if(!completedResult){showSaveStatus("Complete an assessment before saving.");return}if(!coachPin.value){showSaveStatus("Enter the Coach PIN before saving.");return}if(!clientName.value.trim()){showSaveStatus("Client name is missing.");return}const payload={pin:coachPin.value,assessmentId:currentAssessmentId||makeId("ASMT"),clientId:getClientId(),clientName:clientName.value.trim(),clientReference:clientReference.value.trim(),assessmentDate:assessmentDate.value||todayLocal(),assessmentType:"Bodyweight Squat",view:viewSelect.value==="front"?"Front view":"Side view",metrics:completedResult.metrics,statuses:completedResult.statuses,coachNotes:coachNotes.value.trim(),appVersion:APP_VERSION};saveAssessmentBtn.disabled=true;showSaveStatus("Saving assessment to Google Sheets…");try{saveForm.action=WEB_APP_URL;payloadField.value=JSON.stringify(payload);saveForm.submit();const ok=await confirmSave(payload.assessmentId);if(!ok){showSaveStatus("The save was sent but could not be confirmed. Check the Google Sheet before trying again.");saveAssessmentBtn.disabled=false;return}showSaveStatus("✓ Assessment saved to the client's Google Sheets record.");await loadClients();clientSelect.value=payload.clientId;clientChanged();saveAssessmentBtn.disabled=true;viewHistoryBtn.disabled=false}catch(e){showSaveStatus("Save could not be confirmed: "+e.message+" Check the Google Sheet before pressing Save again.");saveAssessmentBtn.disabled=false}}
+function showMessage(el, text) {
+  el.style.display = "block";
+  el.textContent = text;
+}
 
-viewSelect.addEventListener("change",()=>{if(assessmentArmed){setStatus("Finish or retake the current assessment before changing view.");return}resetRep();positionTip.textContent=viewSelect.value==="front"?"Front view: keep the client's full body visible and centre the camera. After pressing Start Assessment, stand tall briefly before beginning one controlled squat.":"Side view: place the camera side-on and keep the hips, knees and ankles fully visible. After pressing Start Assessment, stand tall briefly before beginning one controlled squat."});
-loadClientsBtn.addEventListener("click",loadClients);clientSelect.addEventListener("change",clientChanged);viewHistoryBtn.addEventListener("click",showHistory);saveAssessmentBtn.addEventListener("click",saveAssessment);clientName.addEventListener("input",()=>{if(!clientSelect.value)clientName.dataset.pendingClientId=""});
-startCameraBtn.addEventListener("click",startCamera);stopCameraBtn.addEventListener("click",stopCamera);startAssessmentBtn.addEventListener("click",armAssessment);retakeBtn.addEventListener("click",armAssessment);window.addEventListener("pagehide",stopCamera);document.addEventListener("visibilitychange",()=>{if(document.hidden&&cameraRunning)stopCamera()});
+function hideMessage(el) {
+  el.style.display = "none";
+  el.textContent = "";
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[c]));
+}
+
+function makeId(prefix) {
+  if (crypto?.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getClientId() {
+  if (clientSelect.value) return clientSelect.value;
+
+  if (!clientName.dataset.pendingClientId) {
+    clientName.dataset.pendingClientId = makeId("CL");
+  }
+  return clientName.dataset.pendingClientId;
+}
+
+function statusRank(status) {
+  return status === "RED" ? 3 :
+         status === "AMBER" ? 2 :
+         status === "GREEN" ? 1 : 0;
+}
+
+function worstStatus(list) {
+  return list.reduce(
+    (worst, current) =>
+      statusRank(current) > statusRank(worst) ? current : worst,
+    "GREEN"
+  );
+}
+
+function setStatus(text) {
+  statusBox.textContent = text;
+}
+
+function setInstruction(text) {
+  instruction.textContent = text;
+}
+
+function setState(text) {
+  stateText.textContent = text;
+}
+
+function setTraffic(el, label) {
+  el.textContent = label;
+  el.className = "";
+
+  if (label === "GREEN") el.classList.add("green");
+  if (label === "AMBER") el.classList.add("amber");
+  if (label === "RED") el.classList.add("red");
+}
+
+function statusClass(status) {
+  return status === "GREEN" ? "green" :
+         status === "AMBER" ? "amber" :
+         status === "RED" ? "red" : "";
+}
+
+function avg(values) {
+  const valid = values.filter(Number.isFinite);
+  if (!valid.length) return null;
+  return valid.reduce((a, b) => a + b, 0) / valid.length;
+}
+
+function angleDeg(a, b, c) {
+  const ab = { x: a.x - b.x, y: a.y - b.y };
+  const cb = { x: c.x - b.x, y: c.y - b.y };
+
+  const dot = ab.x * cb.x + ab.y * cb.y;
+  const mag1 = Math.hypot(ab.x, ab.y);
+  const mag2 = Math.hypot(cb.x, cb.y);
+
+  if (!mag1 || !mag2) return null;
+
+  const cos = Math.min(1, Math.max(-1, dot / (mag1 * mag2)));
+  return Math.acos(cos) * 180 / Math.PI;
+}
+
+function kneeDeviation(hip, knee, ankle) {
+  const vx = ankle.x - hip.x;
+  const vy = ankle.y - hip.y;
+  const wx = knee.x - hip.x;
+  const wy = knee.y - hip.y;
+  const len2 = vx * vx + vy * vy;
+
+  if (!len2) return null;
+
+  let t = (wx * vx + wy * vy) / len2;
+  t = Math.max(0, Math.min(1, t));
+
+  const px = hip.x + t * vx;
+  const py = hip.y + t * vy;
+
+  return Math.hypot(knee.x - px, knee.y - py);
+}
+
+function frontStatus(dev) {
+  if (dev == null) return "—";
+  if (dev < 0.025) return "GREEN";
+  if (dev < 0.045) return "AMBER";
+  return "RED";
+}
+
+function sideStatus(angle) {
+  if (angle == null) return "—";
+  if (angle >= 70 && angle <= 120) return "GREEN";
+  if ((angle >= 55 && angle < 70) || (angle > 120 && angle <= 135)) {
+    return "AMBER";
+  }
+  return "RED";
+}
+
+function symmetryStatus(diff) {
+  if (diff == null) return "—";
+  if (diff < 5) return "GREEN";
+  if (diff < 10) return "AMBER";
+  return "RED";
+}
+
+function updateCameraMeta() {
+  const name = clientName.value.trim() || "No client selected";
+  const viewLabel = viewSelect.value === "front" ? "Front view" : "Side view";
+
+  cameraClient.textContent = name;
+  cameraView.textContent = `${viewLabel} • Bodyweight Squat`;
+  overlayClient.textContent = name.toUpperCase();
+  overlayView.textContent = viewSelect.value === "front" ? "FRONT" : "SIDE";
+}
+
+/* ---------- Sound + countdown ---------- */
+
+function ensureAudioContext() {
+  if (!soundEnabled) return null;
+
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return null;
+
+  if (!audioContext) {
+    audioContext = new AudioCtx();
+  }
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume().catch(() => {});
+  }
+
+  return audioContext;
+}
+
+function beep(frequency = 650, duration = 0.11, volume = 0.08) {
+  if (!soundEnabled) return;
+
+  const audio = ensureAudioContext();
+  if (!audio) return;
+
+  try {
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+
+    gain.gain.setValueAtTime(volume, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audio.currentTime + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+
+    oscillator.start();
+    oscillator.stop(audio.currentTime + duration);
+  } catch (err) {
+    console.warn("Beep unavailable", err);
+  }
+}
+
+function completionBeep() {
+  if (!soundEnabled) return;
+
+  beep(780, 0.12, 0.07);
+  setTimeout(() => beep(980, 0.18, 0.08), 170);
+}
+
+function cancelCountdown() {
+  countdownToken += 1;
+  countdownRunning = false;
+  countdownOverlay.classList.remove("show");
+  countdownNumber.classList.remove("go");
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runCountdown() {
+  if (countdownRunning || !cameraRunning) return false;
+
+  countdownRunning = true;
+  const token = ++countdownToken;
+
+  ensureAudioContext();
+
+  countdownOverlay.classList.add("show");
+  setState("Get ready");
+  setInstruction("Get ready — assessment starts after the countdown.");
+
+  for (const value of ["3", "2", "1"]) {
+    if (token !== countdownToken || !cameraRunning) return false;
+
+    countdownNumber.classList.remove("go");
+    countdownNumber.textContent = value;
+    beep(620, 0.10, 0.075);
+
+    await delay(700);
+  }
+
+  if (token !== countdownToken || !cameraRunning) return false;
+
+  countdownNumber.textContent = "GO";
+  countdownNumber.classList.add("go");
+  beep(900, 0.20, 0.09);
+
+  await delay(520);
+
+  if (token !== countdownToken || !cameraRunning) return false;
+
+  countdownOverlay.classList.remove("show");
+  countdownNumber.classList.remove("go");
+  countdownRunning = false;
+
+  return true;
+}
+
+/* ---------- Pose ---------- */
+
+async function initPose() {
+  if (poseLandmarker) return;
+
+  setStatus("Loading movement tracking model…");
+
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm"
+  );
+
+  poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+      delegate: "GPU"
+    },
+    runningMode: "VIDEO",
+    numPoses: 1,
+    minPoseDetectionConfidence: 0.6,
+    minPosePresenceConfidence: 0.6,
+    minTrackingConfidence: 0.6
+  });
+
+  drawingUtils = new DrawingUtils(ctx);
+}
+
+async function startCamera() {
+  if (!clientName.value.trim()) {
+    showMessage(databaseStatus, "Select an existing client or enter a new client name first.");
+    clientName.focus();
+    return;
+  }
+
+  if (!navigator.mediaDevices?.getUserMedia) {
+    setStatus(
+      "Camera access is not supported here. Open the GitHub Pages HTTPS version in a modern browser."
+    );
+    return;
+  }
+
+  try {
+    startCameraBtn.disabled = true;
+    updateCameraMeta();
+    hideMessage(databaseStatus);
+
+    await initPose();
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: cameraFacing.value },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    canvas.width = video.videoWidth || 720;
+    canvas.height = video.videoHeight || 1280;
+
+    cameraRunning = true;
+    cameraOff.style.display = "none";
+
+    stopCameraBtn.disabled = false;
+    startAssessmentBtn.disabled = false;
+    retakeBtn.disabled = true;
+
+    document.body.classList.add("assessment-mode");
+
+    setState("Camera ready");
+    setStatus("Camera active. Make sure the client's full body is visible.");
+    setInstruction("Position the client in frame, then press Start Assessment.");
+
+    requestAnimationFrame(() => {
+      cameraCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    renderLoop();
+  } catch (err) {
+    console.error(err);
+    startCameraBtn.disabled = false;
+
+    if (err.name === "NotAllowedError") {
+      setStatus(
+        "Camera permission was not granted. The app will not access the camera unless you allow it."
+      );
+    } else if (err.name === "NotFoundError") {
+      setStatus("No suitable camera was found on this device.");
+    } else {
+      setStatus("The camera could not start: " + (err.message || err.name));
+    }
+  }
+}
+
+function stopCamera() {
+  cancelCountdown();
+
+  cameraRunning = false;
+  assessmentArmed = false;
+  repState = "idle";
+
+  if (animationId) cancelAnimationFrame(animationId);
+  animationId = null;
+
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  video.srcObject = null;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  cameraOff.style.display = "grid";
+
+  startCameraBtn.disabled = false;
+  stopCameraBtn.disabled = true;
+  startAssessmentBtn.disabled = true;
+  retakeBtn.disabled = true;
+
+  setState("Camera off");
+  setStatus("Camera stopped. The active camera stream has been released.");
+  setInstruction("Camera is off.");
+}
+
+function backToSetup() {
+  stopCamera();
+  document.body.classList.remove("assessment-mode");
+
+  requestAnimationFrame(() => {
+    document.querySelector(".setup-card").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+}
+
+function resetRep() {
+  assessmentArmed = false;
+  repState = "idle";
+  standingFrames = 0;
+  completionFrames = 0;
+  smoothAngle = null;
+  standingHipY = null;
+  repData = null;
+  completedResult = null;
+  currentAssessmentId = "";
+
+  summary.style.display = "none";
+  summary.innerHTML = "";
+
+  saveAssessmentBtn.disabled = true;
+  hideMessage(saveStatus);
+}
+
+async function startAssessmentWithCountdown() {
+  if (!cameraRunning) {
+    setStatus("Start the camera first.");
+    return;
+  }
+
+  if (countdownRunning) return;
+
+  resetRep();
+  startAssessmentBtn.disabled = true;
+  retakeBtn.disabled = true;
+
+  const completed = await runCountdown();
+
+  if (!completed || !cameraRunning) {
+    startAssessmentBtn.disabled = !cameraRunning;
+    return;
+  }
+
+  armAssessmentNow();
+}
+
+function armAssessmentNow() {
+  assessmentArmed = true;
+  repState = "waitingForStand";
+
+  setState("Stand tall");
+  setStatus("Assessment armed.");
+  setInstruction("STAND TALL — hold the starting position briefly.");
+}
+
+function newRep(hipY) {
+  return {
+    standingHipY: hipY,
+    minAvgAngle: Infinity,
+    minLeftAngle: Infinity,
+    minRightAngle: Infinity,
+    maxLeftDev: 0,
+    maxRightDev: 0,
+    maxHipY: hipY,
+    bottomLeft: null,
+    bottomRight: null,
+    bottomAvg: null
+  };
+}
+
+function updateRep(frame) {
+  if (!repData) return;
+
+  if (Number.isFinite(frame.leftAngle)) {
+    repData.minLeftAngle = Math.min(repData.minLeftAngle, frame.leftAngle);
+  }
+
+  if (Number.isFinite(frame.rightAngle)) {
+    repData.minRightAngle = Math.min(repData.minRightAngle, frame.rightAngle);
+  }
+
+  if (Number.isFinite(frame.leftDev)) {
+    repData.maxLeftDev = Math.max(repData.maxLeftDev, frame.leftDev);
+  }
+
+  if (Number.isFinite(frame.rightDev)) {
+    repData.maxRightDev = Math.max(repData.maxRightDev, frame.rightDev);
+  }
+
+  if (Number.isFinite(frame.hipY)) {
+    repData.maxHipY = Math.max(repData.maxHipY, frame.hipY);
+  }
+
+  if (
+    Number.isFinite(frame.avgAngle) &&
+    frame.avgAngle < repData.minAvgAngle
+  ) {
+    repData.minAvgAngle = frame.avgAngle;
+    repData.bottomLeft = frame.leftAngle;
+    repData.bottomRight = frame.rightAngle;
+    repData.bottomAvg = frame.avgAngle;
+  }
+}
+
+function processRep(frame) {
+  if (!assessmentArmed || !Number.isFinite(frame.avgAngle)) return;
+
+  smoothAngle =
+    smoothAngle == null
+      ? frame.avgAngle
+      : smoothAngle * 0.75 + frame.avgAngle * 0.25;
+
+  if (repState === "waitingForStand") {
+    if (smoothAngle > 155) {
+      standingFrames += 1;
+
+      standingHipY =
+        standingHipY == null
+          ? frame.hipY
+          : standingHipY * 0.85 + frame.hipY * 0.15;
+
+      setInstruction("HOLD — standing position being captured.");
+
+      if (standingFrames >= 12) {
+        repState = "readyToDescend";
+        setState("Ready");
+        setStatus("Standing position captured.");
+        setInstruction("GO — begin one controlled squat.");
+        beep(880, 0.11, 0.06);
+      }
+    } else {
+      standingFrames = 0;
+      setInstruction("STAND TALL — keep hips, knees and ankles visible.");
+    }
+    return;
+  }
+
+  if (repState === "readyToDescend") {
+    if (smoothAngle < 150) {
+      repData = newRep(standingHipY ?? frame.hipY);
+      repState = "descending";
+
+      setState("Descending");
+      setStatus("Squat detected.");
+      setInstruction("DOWN — continue the squat under control.");
+
+      updateRep(frame);
+    }
+    return;
+  }
+
+  if (repState === "descending") {
+    updateRep(frame);
+
+    if (
+      repData.minAvgAngle < 140 &&
+      smoothAngle > repData.minAvgAngle + 7
+    ) {
+      repState = "ascending";
+      completionFrames = 0;
+
+      setState("Returning to stand");
+      setInstruction("UP — return to a full standing position.");
+    }
+    return;
+  }
+
+  if (repState === "ascending") {
+    updateRep(frame);
+
+    if (smoothAngle > 155) {
+      completionFrames += 1;
+
+      if (completionFrames >= 10) {
+        completeAssessment();
+      }
+    } else {
+      completionFrames = 0;
+    }
+  }
+}
+
+function completeAssessment() {
+  assessmentArmed = false;
+  repState = "complete";
+
+  if (!repData) {
+    setStatus("Not enough usable data. Please retake.");
+    setInstruction("RETAKE — there was not enough usable movement data.");
+    retakeBtn.disabled = false;
+    startAssessmentBtn.disabled = false;
+    return;
+  }
+
+  const left =
+    Number.isFinite(repData.bottomLeft)
+      ? repData.bottomLeft
+      : Number.isFinite(repData.minLeftAngle)
+      ? repData.minLeftAngle
+      : null;
+
+  const right =
+    Number.isFinite(repData.bottomRight)
+      ? repData.bottomRight
+      : Number.isFinite(repData.minRightAngle)
+      ? repData.minRightAngle
+      : null;
+
+  const diff =
+    Number.isFinite(left) && Number.isFinite(right)
+      ? Math.abs(left - right)
+      : null;
+
+  const hipDrop =
+    Number.isFinite(repData.maxHipY) &&
+    Number.isFinite(repData.standingHipY)
+      ? Math.max(
+          0,
+          (repData.maxHipY - repData.standingHipY) * 100
+        )
+      : null;
+
+  const symmetry = symmetryStatus(diff);
+  const depth = sideStatus(repData.bottomAvg);
+  const leftDevStatus = frontStatus(repData.maxLeftDev);
+  const rightDevStatus = frontStatus(repData.maxRightDev);
+
+  const overall =
+    viewSelect.value === "front"
+      ? worstStatus([leftDevStatus, rightDevStatus, symmetry])
+      : worstStatus([depth, symmetry]);
+
+  completedResult = {
+    metrics: {
+      leftBottom: left,
+      rightBottom: right,
+      bottomAvgAngle: repData.bottomAvg,
+      maxLeftDevPct: repData.maxLeftDev * 100,
+      maxRightDevPct: repData.maxRightDev * 100,
+      symmetryDiff: diff,
+      hipDrop
+    },
+    statuses: {
+      left:
+        viewSelect.value === "front"
+          ? leftDevStatus
+          : sideStatus(left),
+      right:
+        viewSelect.value === "front"
+          ? rightDevStatus
+          : sideStatus(right),
+      depth,
+      symmetry,
+      overall
+    }
+  };
+
+  currentAssessmentId = makeId("ASMT");
+
+  setState("Assessment complete");
+  setStatus("One complete squat rep captured.");
+  setInstruction("COMPLETE — review the results below or press Retake.");
+
+  completionBeep();
+
+  startAssessmentBtn.disabled = false;
+  retakeBtn.disabled = false;
+  saveAssessmentBtn.disabled = false;
+
+  let details = "";
+
+  if (viewSelect.value === "front") {
+    details = `
+      <div class="summary-grid">
+        <div class="summary-item">
+          <small>Max left knee deviation</small>
+          <strong class="${statusClass(leftDevStatus)}">
+            ${(repData.maxLeftDev * 100).toFixed(1)}% — ${leftDevStatus}
+          </strong>
+        </div>
+        <div class="summary-item">
+          <small>Max right knee deviation</small>
+          <strong class="${statusClass(rightDevStatus)}">
+            ${(repData.maxRightDev * 100).toFixed(1)}% — ${rightDevStatus}
+          </strong>
+        </div>
+        <div class="summary-item">
+          <small>Bottom-position knee difference</small>
+          <strong class="${statusClass(symmetry)}">
+            ${diff == null ? "—" : diff.toFixed(1) + "°"} — ${symmetry}
+          </strong>
+        </div>
+        <div class="summary-item">
+          <small>Overall coaching flag</small>
+          <strong class="${statusClass(overall)}">${overall}</strong>
+        </div>
+      </div>
+    `;
+  } else {
+    details = `
+      <div class="summary-grid">
+        <div class="summary-item">
+          <small>Left knee at bottom</small>
+          <strong>${left == null ? "—" : left.toFixed(1) + "°"}</strong>
+        </div>
+        <div class="summary-item">
+          <small>Right knee at bottom</small>
+          <strong>${right == null ? "—" : right.toFixed(1) + "°"}</strong>
+        </div>
+        <div class="summary-item">
+          <small>Average bottom angle</small>
+          <strong class="${statusClass(depth)}">
+            ${repData.bottomAvg == null ? "—" : repData.bottomAvg.toFixed(1) + "°"} — ${depth}
+          </strong>
+        </div>
+        <div class="summary-item">
+          <small>Left/right difference</small>
+          <strong class="${statusClass(symmetry)}">
+            ${diff == null ? "—" : diff.toFixed(1) + "°"} — ${symmetry}
+          </strong>
+        </div>
+        <div class="summary-item">
+          <small>Overall coaching flag</small>
+          <strong class="${statusClass(overall)}">${overall}</strong>
+        </div>
+      </div>
+    `;
+  }
+
+  summary.style.display = "block";
+  summary.innerHTML = `
+    <strong style="font-size:20px">
+      ${escapeHtml(clientName.value.trim())} — Squat Assessment
+    </strong><br>
+    <span style="color:#b7b7bd">
+      ${viewSelect.value === "front" ? "Front view" : "Side view"} • One complete rep captured
+    </span>
+    ${details}
+  `;
+
+  requestAnimationFrame(() => {
+    summary.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+}
+
+function analyse(landmarks) {
+  const leftHip = landmarks[IDX.leftHip];
+  const rightHip = landmarks[IDX.rightHip];
+  const leftKnee = landmarks[IDX.leftKnee];
+  const rightKnee = landmarks[IDX.rightKnee];
+  const leftAnkle = landmarks[IDX.leftAnkle];
+  const rightAnkle = landmarks[IDX.rightAnkle];
+
+  const required = [
+    leftHip,
+    rightHip,
+    leftKnee,
+    rightKnee,
+    leftAnkle,
+    rightAnkle
+  ];
+
+  if (!required.every(p => (p.visibility ?? 1) > 0.45)) {
+    leftMetric.textContent = "—";
+    rightMetric.textContent = "—";
+    setTraffic(leftStatus, "—");
+    setTraffic(rightStatus, "—");
+
+    if (assessmentArmed) {
+      setStatus("Keep the hips, knees and ankles fully visible.");
+      setInstruction("MOVE BACK — keep hips, knees and ankles visible.");
+    }
+
+    return null;
+  }
+
+  const leftAngle = angleDeg(leftHip, leftKnee, leftAnkle);
+  const rightAngle = angleDeg(rightHip, rightKnee, rightAnkle);
+  const avgAngle = avg([leftAngle, rightAngle]);
+
+  const leftDev = kneeDeviation(leftHip, leftKnee, leftAnkle);
+  const rightDev = kneeDeviation(rightHip, rightKnee, rightAnkle);
+
+  const hipY = avg([leftHip.y, rightHip.y]);
+
+  if (viewSelect.value === "front") {
+    leftMetric.textContent =
+      leftDev == null ? "—" : (leftDev * 100).toFixed(1) + "%";
+
+    rightMetric.textContent =
+      rightDev == null ? "—" : (rightDev * 100).toFixed(1) + "%";
+
+    setTraffic(leftStatus, frontStatus(leftDev));
+    setTraffic(rightStatus, frontStatus(rightDev));
+  } else {
+    leftMetric.textContent =
+      leftAngle == null ? "—" : leftAngle.toFixed(0) + "°";
+
+    rightMetric.textContent =
+      rightAngle == null ? "—" : rightAngle.toFixed(0) + "°";
+
+    setTraffic(leftStatus, sideStatus(leftAngle));
+    setTraffic(rightStatus, sideStatus(rightAngle));
+  }
+
+  return {
+    leftAngle,
+    rightAngle,
+    avgAngle,
+    leftDev,
+    rightDev,
+    hipY
+  };
+}
+
+function drawKnees(landmarks) {
+  const knees = [
+    [landmarks[IDX.leftKnee], leftStatus.textContent],
+    [landmarks[IDX.rightKnee], rightStatus.textContent]
+  ];
+
+  for (const [point, status] of knees) {
+    let color =
+      status === "RED" ? "#ff4d4f" :
+      status === "AMBER" ? "#ffb020" :
+      status === "GREEN" ? "#39d353" :
+      "#ffffff";
+
+    ctx.beginPath();
+    ctx.arc(
+      point.x * canvas.width,
+      point.y * canvas.height,
+      10,
+      0,
+      Math.PI * 2
+    );
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#111111";
+    ctx.stroke();
+  }
+}
+
+function renderLoop() {
+  if (!cameraRunning) return;
+
+  if (
+    video.readyState >= 2 &&
+    video.currentTime !== lastVideoTime
+  ) {
+    lastVideoTime = video.currentTime;
+
+    try {
+      const result = poseLandmarker.detectForVideo(
+        video,
+        performance.now()
+      );
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (result.landmarks?.length) {
+        const landmarks = result.landmarks[0];
+
+        drawingUtils.drawConnectors(
+          landmarks,
+          PoseLandmarker.POSE_CONNECTIONS,
+          { color: "#39d353", lineWidth: 4 }
+        );
+
+        drawingUtils.drawLandmarks(
+          landmarks,
+          {
+            color: "#ffffff",
+            fillColor: "#39d353",
+            lineWidth: 2,
+            radius: 4
+          }
+        );
+
+        const frame = analyse(landmarks);
+        if (frame) processRep(frame);
+
+        drawKnees(landmarks);
+      } else if (assessmentArmed) {
+        setStatus(
+          "No full body detected. Step back and keep the client in frame."
+        );
+        setInstruction("MOVE BACK — full body not detected.");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus(
+        "Movement tracking error: " + (err.message || err.name)
+      );
+    }
+  }
+
+  animationId = requestAnimationFrame(renderLoop);
+}
+
+/* ---------- Database ---------- */
+
+function jsonp(params, timeout = 8000) {
+  return new Promise((resolve, reject) => {
+    if (!backendConfigured()) {
+      reject(
+        new Error(
+          "Apps Script URL has not been added to index.html yet."
+        )
+      );
+      return;
+    }
+
+    const callbackName =
+      "__evolve_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(16).slice(2);
+
+    const script = document.createElement("script");
+
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error("The database did not respond in time."));
+    }, timeout);
+
+    function cleanup() {
+      clearTimeout(timer);
+      script.remove();
+      try {
+        delete window[callbackName];
+      } catch {}
+    }
+
+    window[callbackName] = data => {
+      cleanup();
+
+      if (data?.ok) {
+        resolve(data);
+      } else {
+        reject(
+          new Error(data?.error || "Database request failed.")
+        );
+      }
+    };
+
+    const url = new URL(WEB_APP_URL);
+
+    Object.entries({
+      ...params,
+      pin: coachPin.value,
+      callback: callbackName
+    }).forEach(([key, value]) => {
+      url.searchParams.set(key, value ?? "");
+    });
+
+    script.src = url.toString();
+
+    script.onerror = () => {
+      cleanup();
+      reject(
+        new Error("Could not contact the assessment database.")
+      );
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+async function loadClients() {
+  if (!coachPin.value) {
+    showMessage(databaseStatus, "Enter the Coach PIN first.");
+    coachPin.focus();
+    return;
+  }
+
+  loadClientsBtn.disabled = true;
+  loadClientsBtn.textContent = "Loading…";
+
+  try {
+    const data = await jsonp({ action: "clients" });
+
+    clientsCache = data.clients || [];
+    clientSelect.innerHTML =
+      '<option value="">+ New client</option>';
+
+    clientsCache.forEach(client => {
+      const option = document.createElement("option");
+      option.value = client.id;
+      option.textContent =
+        client.name +
+        (client.assessmentCount
+          ? ` (${client.assessmentCount})`
+          : "");
+      clientSelect.appendChild(option);
+    });
+
+    showMessage(
+      databaseStatus,
+      clientsCache.length
+        ? `${clientsCache.length} client${
+            clientsCache.length === 1 ? "" : "s"
+          } loaded.`
+        : "Database connected. No clients saved yet."
+    );
+  } catch (err) {
+    showMessage(databaseStatus, err.message);
+  } finally {
+    loadClientsBtn.disabled = false;
+    loadClientsBtn.textContent = "Load Clients";
+  }
+}
+
+function clientChanged() {
+  history.style.display = "none";
+  historyList.innerHTML = "";
+  clientName.dataset.pendingClientId = "";
+
+  const id = clientSelect.value;
+
+  if (!id) {
+    clientName.readOnly = false;
+    clientReference.readOnly = false;
+    clientName.value = "";
+    clientReference.value = "";
+    viewHistoryBtn.disabled = true;
+    updateCameraMeta();
+    return;
+  }
+
+  const client = clientsCache.find(item => item.id === id);
+  if (!client) return;
+
+  clientName.value = client.name;
+  clientName.readOnly = true;
+
+  clientReference.value = client.reference || "";
+  clientReference.readOnly = true;
+
+  viewHistoryBtn.disabled = false;
+  updateCameraMeta();
+}
+
+async function showHistory() {
+  if (!clientSelect.value) {
+    showMessage(
+      databaseStatus,
+      "Select an existing client first."
+    );
+    return;
+  }
+
+  viewHistoryBtn.disabled = true;
+  viewHistoryBtn.textContent = "Loading…";
+
+  try {
+    const data = await jsonp({
+      action: "history",
+      clientId: clientSelect.value
+    });
+
+    history.style.display = "block";
+    historyList.innerHTML = "";
+
+    if (!(data.history || []).length) {
+      historyList.innerHTML =
+        '<div class="history-row">No saved assessments yet.</div>';
+      return;
+    }
+
+    (data.history || []).forEach(item => {
+      const row = document.createElement("div");
+      row.className = "history-row";
+
+      const result =
+        item.view === "Front view"
+          ? `L ${item.maxLeftDevPct ?? "—"}% • R ${
+              item.maxRightDevPct ?? "—"
+            }%`
+          : `${item.bottomAvgAngle ?? "—"}° avg`;
+
+      row.innerHTML = `
+        <div>
+          <strong>${escapeHtml(
+            item.assessmentDate || item.savedAt
+          )}</strong>
+          <small>
+            ${escapeHtml(item.assessmentType)} •
+            ${escapeHtml(item.view)}
+          </small>
+        </div>
+        <div>${escapeHtml(result)}</div>
+        <strong class="${statusClass(item.overallStatus)}">
+          ${escapeHtml(item.overallStatus || "—")}
+        </strong>
+      `;
+
+      historyList.appendChild(row);
+    });
+  } catch (err) {
+    showMessage(databaseStatus, err.message);
+  } finally {
+    viewHistoryBtn.disabled = false;
+    viewHistoryBtn.textContent = "View History";
+  }
+}
+
+async function confirmSave(id) {
+  for (let i = 0; i < 6; i += 1) {
+    await delay(i ? 850 : 1000);
+
+    try {
+      const result = await jsonp(
+        { action: "check", assessmentId: id },
+        6000
+      );
+
+      if (result.saved) return true;
+    } catch (err) {
+      if (i === 5) throw err;
+    }
+  }
+
+  return false;
+}
+
+async function saveAssessment() {
+  if (!backendConfigured()) {
+    showMessage(
+      saveStatus,
+      "The Apps Script URL still needs to be pasted into index.html."
+    );
+    return;
+  }
+
+  if (!completedResult) {
+    showMessage(
+      saveStatus,
+      "Complete an assessment before saving."
+    );
+    return;
+  }
+
+  if (!coachPin.value) {
+    showMessage(saveStatus, "Enter the Coach PIN before saving.");
+    return;
+  }
+
+  if (!clientName.value.trim()) {
+    showMessage(saveStatus, "Client name is missing.");
+    return;
+  }
+
+  const payload = {
+    pin: coachPin.value,
+    assessmentId:
+      currentAssessmentId || makeId("ASMT"),
+    clientId: getClientId(),
+    clientName: clientName.value.trim(),
+    clientReference: clientReference.value.trim(),
+    assessmentDate:
+      assessmentDate.value || todayLocal(),
+    assessmentType: "Bodyweight Squat",
+    view:
+      viewSelect.value === "front"
+        ? "Front view"
+        : "Side view",
+    metrics: completedResult.metrics,
+    statuses: completedResult.statuses,
+    coachNotes: coachNotes.value.trim(),
+    appVersion: APP_VERSION
+  };
+
+  saveAssessmentBtn.disabled = true;
+  showMessage(
+    saveStatus,
+    "Saving assessment to Google Sheets…"
+  );
+
+  try {
+    saveForm.action = WEB_APP_URL;
+    payloadField.value = JSON.stringify(payload);
+    saveForm.submit();
+
+    const saved = await confirmSave(payload.assessmentId);
+
+    if (!saved) {
+      showMessage(
+        saveStatus,
+        "The save was sent but could not be confirmed. Check the Google Sheet before trying again."
+      );
+      saveAssessmentBtn.disabled = false;
+      return;
+    }
+
+    showMessage(
+      saveStatus,
+      "✓ Assessment saved to the client's Google Sheets record."
+    );
+
+    await loadClients();
+    clientSelect.value = payload.clientId;
+    clientChanged();
+
+    saveAssessmentBtn.disabled = true;
+    viewHistoryBtn.disabled = false;
+  } catch (err) {
+    showMessage(
+      saveStatus,
+      "Save could not be confirmed: " +
+        err.message +
+        " Check the Google Sheet before pressing Save again."
+    );
+    saveAssessmentBtn.disabled = false;
+  }
+}
+
+/* ---------- Events ---------- */
+
+soundToggleBtn.addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+
+  if (soundEnabled) {
+    ensureAudioContext();
+    soundToggleBtn.textContent = "🔊 Sound On";
+    beep(760, 0.08, 0.05);
+  } else {
+    soundToggleBtn.textContent = "🔇 Sound Off";
+  }
+});
+
+viewSelect.addEventListener("change", () => {
+  if (assessmentArmed) {
+    setStatus(
+      "Finish or retake the current assessment before changing view."
+    );
+    return;
+  }
+
+  resetRep();
+  updateCameraMeta();
+
+  positionTip.textContent =
+    viewSelect.value === "front"
+      ? "Front view: keep the client's full body visible and centre the camera."
+      : "Side view: place the camera side-on and keep hips, knees and ankles fully visible.";
+});
+
+loadClientsBtn.addEventListener("click", loadClients);
+clientSelect.addEventListener("change", clientChanged);
+viewHistoryBtn.addEventListener("click", showHistory);
+saveAssessmentBtn.addEventListener("click", saveAssessment);
+
+clientName.addEventListener("input", () => {
+  if (!clientSelect.value) {
+    clientName.dataset.pendingClientId = "";
+  }
+  updateCameraMeta();
+});
+
+startCameraBtn.addEventListener("click", startCamera);
+stopCameraBtn.addEventListener("click", stopCamera);
+backSetupBtn.addEventListener("click", backToSetup);
+
+startAssessmentBtn.addEventListener(
+  "click",
+  startAssessmentWithCountdown
+);
+retakeBtn.addEventListener(
+  "click",
+  startAssessmentWithCountdown
+);
+
+window.addEventListener("pagehide", stopCamera);
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && cameraRunning) {
+    stopCamera();
+  }
+});
+
+updateCameraMeta();
 </script>
 </body>
 </html>
