@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolve Movement Assessment V1</title>
+  <style>
+    :root{
+      --bg:#0f0f10;
+      --panel:#18181b;
+      --panel2:#222226;
+      --text:#ffffff;
+      --muted:#b7b7bd;
+      --orange:#ff7a00;
+      --green:#39d353;
+      --amber:#ffb020;
+      --red:#ff4d4f;
+      --line:#34343a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      width:min(1100px,100%);
+      margin:0 auto;
+      padding:18px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+      border-bottom:2px solid var(--orange);
+      padding-bottom:12px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:clamp(22px,4vw,34px);
+      letter-spacing:.5px;
+    }
+    .brand span{color:var(--orange)}
+    .badge{
+      background:#2b1b0d;
+      color:#ffb66f;
+      border:1px solid #6b3a13;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1.45fr;
+      gap:16px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+    h2,h3{margin-top:0}
+    label{
+      display:block;
+      font-size:14px;
+      color:var(--muted);
+      margin:12px 0 6px;
+    }
+    input,select{
+      width:100%;
+      min-height:46px;
+      border-radius:10px;
+      border:1px solid #44444a;
+      background:#111114;
+      color:#fff;
+      padding:10px 12px;
+      font-size:16px;
+    }
+    button{
+      min-height:46px;
+      border:0;
+      border-radius:10px;
+      padding:10px 14px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .primary{background:var(--orange);color:#111}
+    .secondary{background:#303036;color:#fff}
+    .danger{background:#4b1818;color:#fff}
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .controls button{flex:1 1 140px}
+    .video-wrap{
+      position:relative;
+      width:100%;
+      aspect-ratio:3/4;
+      background:#050506;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid #35353b;
+    }
+    video,canvas{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    canvas{pointer-events:none}
+    .camera-off{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:24px;
+      color:var(--muted);
+      z-index:2;
+    }
+    .status{
+      margin-top:12px;
+      padding:12px;
+      border-radius:10px;
+      background:#111114;
+      border:1px solid #303036;
+      min-height:46px;
+    }
+    .metrics{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    .metric{
+      background:var(--panel2);
+      border:1px solid #36363d;
+      border-radius:12px;
+      padding:12px;
+    }
+    .metric small{display:block;color:var(--muted);margin-bottom:4px}
+    .metric strong{font-size:20px}
+    .green{color:var(--green)}
+    .amber{color:var(--amber)}
+    .red{color:var(--red)}
+    .note{
+      color:var(--muted);
+      line-height:1.45;
+      font-size:13px;
+      margin-top:12px;
+    }
+    .summary{
+      margin-top:12px;
+      display:none;
+      border-left:4px solid var(--orange);
+      padding:12px 14px;
+      background:#141416;
+    }
+    @media(max-width:800px){
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="brand">
+      <h1>EVOLVE <span>Movement Assessment</span></h1>
+      <div class="badge">V1 • Squat Assessment</div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Client</h2>
+
+        <label for="clientName">Client name</label>
+        <input id="clientName" type="text" placeholder="Enter client name" />
+
+        <label for="viewSelect">Assessment view</label>
+        <select id="viewSelect">
+          <option value="front">Front view — knee tracking</option>
+          <option value="side">Side view — knee flexion angle</option>
+        </select>
+
+        <label for="cameraFacing">Preferred camera</label>
+        <select id="cameraFacing">
+          <option value="environment">Rear camera</option>
+          <option value="user">Front camera</option>
+        </select>
+
+        <div class="controls">
+          <button id="startCamera" class="primary">Start Camera</button>
+          <button id="stopCamera" class="danger" disabled>Stop Camera</button>
+        </div>
+
+        <div class="status" id="systemStatus">Camera is off. No camera permission has been requested.</div>
+
+        <div class="metrics">
+          <div class="metric">
+            <small>Left knee</small>
+            <strong id="leftMetric">—</strong>
+          </div>
+          <div class="metric">
+            <small>Right knee</small>
+            <strong id="rightMetric">—</strong>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <small>Left status</small>
+            <strong id="leftStatus">—</strong>
+          </div>
+          <div class="metric">
+            <small>Right status</small>
+            <strong id="rightStatus">—</strong>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="finishAssessment" class="secondary" disabled>Finish Assessment</button>
+          <button id="resetAssessment" class="secondary">Reset</button>
+        </div>
+
+        <div class="summary" id="summary"></div>
+
+        <p class="note">
+          V1 is a coaching aid, not a medical diagnosis. Green/amber/red thresholds are deliberately
+          conservative starter values and should be calibrated before being used as formal scoring criteria.
+          If a client reports pain, stop the assessment and follow your normal professional referral process.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Live assessment</h2>
+        <div class="video-wrap" id="videoWrap">
+          <video id="video" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div class="camera-off" id="cameraOff">
+            <div>
+              <strong>Camera off</strong><br><br>
+              Press <b>Start Camera</b> when you are ready.<br>
+              Camera access is requested only at that point.
+            </div>
+          </div>
+        </div>
+        <p class="note" id="positionTip">
+          Front view: place the device far enough away to keep the client's full body visible.
+          Try to keep the camera level and centred.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import {
+      FilesetResolver,
+      PoseLandmarker,
+      DrawingUtils
+    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/+esm";
+
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("overlay");
+    const ctx = canvas.getContext("2d");
+    const startBtn = document.getElementById("startCamera");
+    const stopBtn = document.getElementById("stopCamera");
+    const finishBtn = document.getElementById("finishAssessment");
+    const resetBtn = document.getElementById("resetAssessment");
+    const clientName = document.getElementById("clientName");
+    const viewSelect = document.getElementById("viewSelect");
+    const cameraFacing = document.getElementById("cameraFacing");
+    const statusBox = document.getElementById("systemStatus");
+    const cameraOff = document.getElementById("cameraOff");
+    const positionTip = document.getElementById("positionTip");
+    const leftMetric = document.getElementById("leftMetric");
+    const rightMetric = document.getElementById("rightMetric");
+    const leftStatus = document.getElementById("leftStatus");
+    const rightStatus = document.getElementById("rightStatus");
+    const summary = document.getElementById("summary");
+
+    let stream = null;
+    let poseLandmarker = null;
+    let drawingUtils = null;
+    let running = false;
+    let animationId = null;
+    let lastVideoTime = -1;
+    let latest = null;
+
+    const IDX = {
+      leftShoulder: 11,
+      rightShoulder: 12,
+      leftHip: 23,
+      rightHip: 24,
+      leftKnee: 25,
+      rightKnee: 26,
+      leftAnkle: 27,
+      rightAnkle: 28
+    };
+
+    function setStatus(text) {
+      statusBox.textContent = text;
+    }
+
+    function setTraffic(el, label) {
+      el.textContent = label;
+      el.className = "";
+      if (label === "GREEN") el.classList.add("green");
+      if (label === "AMBER") el.classList.add("amber");
+      if (label === "RED") el.classList.add("red");
+    }
+
+    function angleDegrees(a, b, c) {
+      const ab = { x: a.x - b.x, y: a.y - b.y };
+      const cb = { x: c.x - b.x, y: c.y - b.y };
+      const dot = ab.x * cb.x + ab.y * cb.y;
+      const mag1 = Math.hypot(ab.x, ab.y);
+      const mag2 = Math.hypot(cb.x, cb.y);
+      if (!mag1 || !mag2) return null;
+      const cos = Math.min(1, Math.max(-1, dot / (mag1 * mag2)));
+      return Math.acos(cos) * 180 / Math.PI;
+    }
+
+    // 2D coaching heuristic for front-view knee tracking.
+    // Measures how far the knee is from the line joining hip and ankle.
+    function kneeLineDeviation(hip, knee, ankle) {
+      const vx = ankle.x - hip.x;
+      const vy = ankle.y - hip.y;
+      const wx = knee.x - hip.x;
+      const wy = knee.y - hip.y;
+      const len2 = vx * vx + vy * vy;
+      if (!len2) return null;
+      let t = (wx * vx + wy * vy) / len2;
+      t = Math.max(0, Math.min(1, t));
+      const px = hip.x + t * vx;
+      const py = hip.y + t * vy;
+      return Math.hypot(knee.x - px, knee.y - py);
+    }
+
+    function frontStatus(dev) {
+      if (dev == null) return "—";
+      if (dev < 0.025) return "GREEN";
+      if (dev < 0.045) return "AMBER";
+      return "RED";
+    }
+
+    function sideStatus(angle) {
+      if (angle == null) return "—";
+      // V1 does NOT call a deeper squat automatically "better".
+      // This simply marks a usable working range for a bodyweight squat snapshot.
+      if (angle >= 70 && angle <= 120) return "GREEN";
+      if ((angle >= 55 && angle < 70) || (angle > 120 && angle <= 135)) return "AMBER";
+      return "RED";
+    }
+
+    async function initPose() {
+      if (poseLandmarker) return;
+      setStatus("Loading movement tracking model…");
+
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm"
+      );
+
+      poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath:
+            "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+          delegate: "GPU"
+        },
+        runningMode: "VIDEO",
+        numPoses: 1,
+        minPoseDetectionConfidence: 0.6,
+        minPosePresenceConfidence: 0.6,
+        minTrackingConfidence: 0.6
+      });
+
+      drawingUtils = new DrawingUtils(ctx);
+    }
+
+    async function startCamera() {
+      if (!clientName.value.trim()) {
+        setStatus("Enter the client's name before starting the assessment.");
+        clientName.focus();
+        return;
+      }
+
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setStatus("Camera access is not supported here. Open the GitHub Pages HTTPS version in a modern browser.");
+        return;
+      }
+
+      try {
+        startBtn.disabled = true;
+        await initPose();
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: {
+            facingMode: { ideal: cameraFacing.value },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+
+        video.srcObject = stream;
+        await video.play();
+
+        canvas.width = video.videoWidth || 720;
+        canvas.height = video.videoHeight || 1280;
+
+        running = true;
+        cameraOff.style.display = "none";
+        stopBtn.disabled = false;
+        finishBtn.disabled = false;
+        setStatus("Camera active. Movement tracking is running.");
+        renderLoop();
+      } catch (err) {
+        console.error(err);
+        startBtn.disabled = false;
+        if (err.name === "NotAllowedError") {
+          setStatus("Camera permission was not granted. You can keep using the rest of the app without the camera.");
+        } else if (err.name === "NotFoundError") {
+          setStatus("No suitable camera was found on this device.");
+        } else {
+          setStatus("The camera could not start: " + (err.message || err.name));
+        }
+      }
+    }
+
+    function stopCamera() {
+      running = false;
+      if (animationId) cancelAnimationFrame(animationId);
+      animationId = null;
+
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+
+      video.srcObject = null;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cameraOff.style.display = "grid";
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      setStatus("Camera stopped. The active camera stream has been released.");
+    }
+
+    function analyse(landmarks) {
+      const lHip = landmarks[IDX.leftHip];
+      const rHip = landmarks[IDX.rightHip];
+      const lKnee = landmarks[IDX.leftKnee];
+      const rKnee = landmarks[IDX.rightKnee];
+      const lAnkle = landmarks[IDX.leftAnkle];
+      const rAnkle = landmarks[IDX.rightAnkle];
+
+      const visibilityOk = [lHip, rHip, lKnee, rKnee, lAnkle, rAnkle]
+        .every(p => (p.visibility ?? 1) > 0.45);
+
+      if (!visibilityOk) {
+        leftMetric.textContent = "—";
+        rightMetric.textContent = "—";
+        setTraffic(leftStatus, "—");
+        setTraffic(rightStatus, "—");
+        setStatus("Keep hips, knees and ankles fully visible in the camera.");
+        latest = null;
+        return;
+      }
+
+      if (viewSelect.value === "front") {
+        const leftDev = kneeLineDeviation(lHip, lKnee, lAnkle);
+        const rightDev = kneeLineDeviation(rHip, rKnee, rAnkle);
+        const ls = frontStatus(leftDev);
+        const rs = frontStatus(rightDev);
+
+        leftMetric.textContent = leftDev == null ? "—" : (leftDev * 100).toFixed(1) + "%";
+        rightMetric.textContent = rightDev == null ? "—" : (rightDev * 100).toFixed(1) + "%";
+        setTraffic(leftStatus, ls);
+        setTraffic(rightStatus, rs);
+
+        latest = {
+          mode: "Front view",
+          left: leftDev == null ? null : +(leftDev * 100).toFixed(1),
+          right: rightDev == null ? null : +(rightDev * 100).toFixed(1),
+          leftStatus: ls,
+          rightStatus: rs
+        };
+      } else {
+        const leftAngle = angleDegrees(lHip, lKnee, lAnkle);
+        const rightAngle = angleDegrees(rHip, rKnee, rAnkle);
+        const ls = sideStatus(leftAngle);
+        const rs = sideStatus(rightAngle);
+
+        leftMetric.textContent = leftAngle == null ? "—" : leftAngle.toFixed(0) + "°";
+        rightMetric.textContent = rightAngle == null ? "—" : rightAngle.toFixed(0) + "°";
+        setTraffic(leftStatus, ls);
+        setTraffic(rightStatus, rs);
+
+        latest = {
+          mode: "Side view",
+          left: leftAngle == null ? null : +leftAngle.toFixed(0),
+          right: rightAngle == null ? null : +rightAngle.toFixed(0),
+          leftStatus: ls,
+          rightStatus: rs
+        };
+      }
+    }
+
+    function drawKneeMarkers(landmarks) {
+      const knees = [
+        { p: landmarks[IDX.leftKnee], status: leftStatus.textContent },
+        { p: landmarks[IDX.rightKnee], status: rightStatus.textContent }
+      ];
+
+      for (const item of knees) {
+        const { p, status } = item;
+        let colour = "#39d353";
+        if (status === "AMBER") colour = "#ffb020";
+        if (status === "RED") colour = "#ff4d4f";
+        if (status === "—") colour = "#ffffff";
+
+        ctx.beginPath();
+        ctx.arc(p.x * canvas.width, p.y * canvas.height, 10, 0, Math.PI * 2);
+        ctx.fillStyle = colour;
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#111111";
+        ctx.stroke();
+      }
+    }
+
+    function renderLoop() {
+      if (!running) return;
+
+      if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
+        lastVideoTime = video.currentTime;
+
+        try {
+          const result = poseLandmarker.detectForVideo(video, performance.now());
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          if (result.landmarks?.length) {
+            const landmarks = result.landmarks[0];
+
+            drawingUtils.drawConnectors(
+              landmarks,
+              PoseLandmarker.POSE_CONNECTIONS,
+              { color: "#39d353", lineWidth: 4 }
+            );
+
+            drawingUtils.drawLandmarks(
+              landmarks,
+              { color: "#ffffff", fillColor: "#39d353", lineWidth: 2, radius: 4 }
+            );
+
+            analyse(landmarks);
+            drawKneeMarkers(landmarks);
+          } else {
+            leftMetric.textContent = "—";
+            rightMetric.textContent = "—";
+            setTraffic(leftStatus, "—");
+            setTraffic(rightStatus, "—");
+            setStatus("No full body detected. Step back and keep the client in frame.");
+            latest = null;
+          }
+        } catch (err) {
+          console.error(err);
+          setStatus("Movement tracking error: " + (err.message || err.name));
+        }
+      }
+
+      animationId = requestAnimationFrame(renderLoop);
+    }
+
+    function finishAssessment() {
+      if (!latest) {
+        setStatus("No usable assessment result is currently available.");
+        return;
+      }
+
+      stopCamera();
+
+      const unit = latest.mode === "Front view" ? "%" : "°";
+      summary.style.display = "block";
+      summary.innerHTML = `
+        <strong>${clientName.value.trim()} — Squat Assessment</strong><br><br>
+        View: ${latest.mode}<br>
+        Left: ${latest.left ?? "—"}${latest.left == null ? "" : unit} — <b>${latest.leftStatus}</b><br>
+        Right: ${latest.right ?? "—"}${latest.right == null ? "" : unit} — <b>${latest.rightStatus}</b><br><br>
+        <span style="color:#b7b7bd">V1 result is stored only on this screen. Google Sheets saving comes next.</span>
+      `;
+      setStatus("Assessment finished. Camera is off.");
+    }
+
+    function resetAssessment() {
+      stopCamera();
+      latest = null;
+      leftMetric.textContent = "—";
+      rightMetric.textContent = "—";
+      setTraffic(leftStatus, "—");
+      setTraffic(rightStatus, "—");
+      summary.style.display = "none";
+      summary.innerHTML = "";
+      setStatus("Reset complete. Camera is off.");
+    }
+
+    viewSelect.addEventListener("change", () => {
+      latest = null;
+      leftMetric.textContent = "—";
+      rightMetric.textContent = "—";
+      setTraffic(leftStatus, "—");
+      setTraffic(rightStatus, "—");
+
+      if (viewSelect.value === "front") {
+        positionTip.textContent =
+          "Front view: place the device far enough away to keep the client's full body visible. Try to keep the camera level and centred.";
+      } else {
+        positionTip.textContent =
+          "Side view: place the camera roughly side-on to the client and keep hips, knees and ankles fully visible.";
+      }
+    });
+
+    startBtn.addEventListener("click", startCamera);
+    stopBtn.addEventListener("click", stopCamera);
+    finishBtn.addEventListener("click", finishAssessment);
+    resetBtn.addEventListener("click", resetAssessment);
+
+    window.addEventListener("pagehide", stopCamera);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && running) stopCamera();
+    });
+  </script>
+</body>
+</html>
